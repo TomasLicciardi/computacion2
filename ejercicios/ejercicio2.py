@@ -1,10 +1,12 @@
 import argparse
 import sys
 
-parser = argparse.ArgumentParser(description='Repetir tantas veces el texto ingresado como indica el numero ingresado')
+
 
 def main():
 
+    parser = argparse.ArgumentParser(description='Repetir tantas veces el texto ingresado como indica el numero ingresado')
+    
     parser.add_argument('--cadena', type=str, help='Ingresar texto para repetir')
     parser.add_argument('--numero', type=int, help='Ingresar numero para repetir el texto')
 
