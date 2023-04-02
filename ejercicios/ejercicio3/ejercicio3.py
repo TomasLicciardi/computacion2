@@ -10,15 +10,23 @@ def main():
     
     with open(args.archivo + '.txt', 'r') as archivo:
         lineas = archivo.readlines()
-        num_lineas = len(lineas)
+        contador = 0
+        while contador < len(lineas):
+            if lineas[contador] == '\n':
+                del lineas[contador]
+            else:
+                contador += 1
         linea = []
         for i in lineas:
             linea.append(i.strip())
+            if i == '\n':
+                lineas.remove(i)
+        num_lineas = len(lineas)
         contenido = " ".join(linea)
-        palabras = contenido.strip().split(" ")  
+        palabras = contenido.strip().split()  
         longitud = "".join(palabras)
         promedio = len(longitud) / len(palabras)
-        
+
     print(f"El archivo tiene {len(palabras)} cantidad de palabras")
     print(f"El archivo tiene {num_lineas} cantidad de lineas")
     print(f"El promedio de la longitud de las palabras es {round(promedio)}")
