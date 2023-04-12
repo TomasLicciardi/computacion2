@@ -1,0 +1,8 @@
+Probando
+Todos
+
+Los mensajes 
+Del proceso padre
+Al proceso Hijo
+
+Funciona! :D
