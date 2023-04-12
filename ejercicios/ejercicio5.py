@@ -2,13 +2,12 @@
 import argparse
 import os
 import math
-import cmath
 
 def main():
 
     parser = argparse.ArgumentParser(description='Proceso padre calcula la raíz positiva y proceso hijo calcula la raíz negativa')
 
-    parser.add_argument('-f','--fork',action="store_true", help='Aca se va a pasar el proceso')
+    parser.add_argument('-f','--fork", action="store_true', help='Aca se va a pasar el argumento -f para que se cree un proceso hijo')
     parser.add_argument('-n','--numero',type=int, help='Aca se va a pasar el numero que le vamos a sacar la raiz cuadrada')
 
     args = parser.parse_args()
