@@ -1,17 +1,11 @@
+import os
+import sys
 import argparse
-import multiprocessing
 
 def invertir_linea(linea):
     return ''.join(reversed(linea))
 
-def recibir_datos(conexion):
-    informacion = conexion.recv()
-    linea_invertida = invertir_linea(informacion)
-    conexion.send(linea_invertida)
-    conexion.close()
-
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file", type=str, help="nombre del archivo")
     args = parser.parse_args()
@@ -19,26 +13,27 @@ if __name__ == '__main__':
     try:
         with open(args.file + '.txt', 'r') as archivo:
             lineas = archivo.readlines()
-            num_lineas = len(lineas)
-        archivo.close()
     except Exception:
-        print('No se ha encontrado el archivo!')
+        print('No se ha encontrado el archivo')
+        sys.exit(1)
+    
+
     try:
-        with open('info_invertida.txt', 'w') as arc_inv:
-            for i in range(num_lineas):
-                conn_pa, conn_hi = multiprocessing.Pipe()
-                proceso_hijo = multiprocessing.Process(target=recibir_datos, args=(conn_hi,))
-                proceso_hijo.start()
-                conn_pa.send(lineas[i].strip())
-                proceso_hijo.join()
-                linea_invertida = conn_pa.recv()
-                arc_inv.write(linea_invertida + '\n')
+        for linea in lineas:
+            linea = linea.strip()
+            conn_pa, escritura = os.pipe()
+            pid = os.fork()
+            if pid == 0:# Proceso hijo
+                os.close(escritura)
+                linea_leida = os.read(conn_pa, 1024).decode().strip()
+                os.close(conn_pa)
+                linea_invertida = invertir_linea(linea_leida)
+                os.write(1, (linea_invertida + '\n').encode())
+                sys.exit(0)
+            else: # Proceso padre
+                os.close(conn_pa)
+                os.write(escritura, linea.encode())
+                os.close(escritura)
+                os.waitpid(pid, 0)
     except Exception:
-        print('No se ha encontrado el archivo!')
-    try:
-        with open('info_invertida.txt', 'r') as archivo_invertido:
-            lineas_invertidas = archivo_invertido.readlines()
-            for linea in lineas_invertidas:
-                print(linea.strip())
-    except Exception:
-        print('No se ha encontrado el archivo invertido')
+        print('Ha ocurrido un error!')
