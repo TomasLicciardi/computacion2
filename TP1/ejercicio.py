@@ -22,16 +22,23 @@ if __name__ == '__main__':
             num_lineas = len(lineas)
         archivo.close()
     except Exception:
-        print('No se ha encontrado el archivo')
-
-    with open('info_invertida.txt', 'w') as arc_inv:
-        for i in range(num_lineas):
-            conn_pa, conn_hi = multiprocessing.Pipe()
-            proceso_hijo = multiprocessing.Process(target=recibir_datos, args=(conn_hi,))
-            proceso_hijo.start()
-            conn_pa.send(lineas[i].strip())
-            proceso_hijo.join()
-            linea_invertida = conn_pa.recv()
-            arc_inv.write(linea_invertida + '\n')
-            print(linea_invertida)
-        
+        print('No se ha encontrado el archivo!')
+    try:
+        with open('info_invertida.txt', 'w') as arc_inv:
+            for i in range(num_lineas):
+                conn_pa, conn_hi = multiprocessing.Pipe()
+                proceso_hijo = multiprocessing.Process(target=recibir_datos, args=(conn_hi,))
+                proceso_hijo.start()
+                conn_pa.send(lineas[i].strip())
+                proceso_hijo.join()
+                linea_invertida = conn_pa.recv()
+                arc_inv.write(linea_invertida + '\n')
+    except Exception:
+        print('No se ha encontrado el archivo!')
+    try:
+        with open('info_invertida.txt', 'r') as archivo_invertido:
+            lineas_invertidas = archivo_invertido.readlines()
+            for linea in lineas_invertidas:
+                print(linea.strip())
+    except Exception:
+        print('No se ha encontrado el archivo invertido')
