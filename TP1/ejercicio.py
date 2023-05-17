@@ -21,10 +21,10 @@ if __name__ == '__main__':
     try:
         for linea in lineas:
             linea = linea.strip()
-            conn_pa, escritura = os.pipe()
+            conn_pa, conn_hi = os.pipe()
             pid = os.fork()
             if pid == 0:# Proceso hijo
-                os.close(escritura)
+                os.close(conn_hi)
                 linea_leida = os.read(conn_pa, 1024).decode().strip()
                 os.close(conn_pa)
                 linea_invertida = invertir_linea(linea_leida)
@@ -32,8 +32,8 @@ if __name__ == '__main__':
                 sys.exit(0)
             else: # Proceso padre
                 os.close(conn_pa)
-                os.write(escritura, linea.encode())
-                os.close(escritura)
+                os.write(conn_hi, linea.encode())
+                os.close(conn_hi)
                 os.waitpid(pid, 0)
     except Exception:
         print('Ha ocurrido un error!')
